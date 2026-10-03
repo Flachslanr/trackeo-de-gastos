@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12141A">
+<title>Estoico — 12 Semanas</title>
+
+<!-- Favicon e íconos -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-180.png">
+
+<!-- Soporte PWA / instalación en pantalla de inicio -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Estoico">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+
+<!-- SEO / al compartir el link -->
+<meta name="description" content="Seguimiento de hábitos de mente, cuerpo y alma en ciclos de 12 semanas.">
+<meta property="og:title" content="Estoico — Hábitos">
+<meta property="og:description" content="Seguimiento de hábitos de mente, cuerpo y alma en ciclos de 12 semanas.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/icon-512.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#12141A;--surface:#1A1D25;--surface-2:#20232D;--surface-3:#252934;--line:#2A2E38;--text:#EDEAE3;--dim:#A4A8B2;--faint:#747985;--mente:#8AA9C9;--cuerpo:#93AE86;--alma:#C9A66B;--danger:#D49484;--success:#93AE86;--accent:#E8C9A0;--r:14px}
+* {box-sizing:border-box}
+html, body {margin:0;padding:0}
+body {background:var(--bg);color:var(--text);font-family:Inter,sans-serif;min-height:100vh;padding-bottom:100px;-webkit-font-smoothing:antialiased}
+button, input, select, textarea {font:inherit}
+button {-webkit-tap-highlight-color:transparent;cursor:pointer}
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {outline:2px solid var(--accent);outline-offset:2px}
+::selection {background:var(--mente);color:#12141A}
+
+.top {padding:20px;position:sticky;top:0;background:linear-gradient(var(--bg) 86%,transparent);z-index:10}
+.eyebrow {font-family:'JetBrains Mono';font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 8px}
+.brand {font-family:Fraunces,serif;font-size:27px;font-weight:500;margin:0 0 16px}
+.header-row {display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.level-display {font-family:Fraunces;font-size:24px;font-weight:500}
+.level-label {font-family:'JetBrains Mono';font-size:10px;color:var(--faint);text-transform:uppercase;margin-top:4px}
+.progress-bar {height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0 8px}
+.progress-fill {height:100%;background:var(--accent);border-radius:6px;transition:width .3s ease}
+.progress-label {font-size:11px;color:var(--dim);font-family:'JetBrains Mono';display:flex;justify-content:space-between}
+
+main {padding:0 16px;max-width:640px;margin:auto}
+.view {display:none}
+.view.active {display:block}
+.greeting {margin:0 0 18px}
+.greeting h2 {font:500 24px Fraunces;margin:0 0 4px}
+.greeting p {margin:0;color:var(--dim);font-size:13px}
+
+.card {background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.section-label {font:10px 'JetBrains Mono';letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+.card-title {font:18px Fraunces;margin-bottom:10px}
+
+/* Week Navigation */
+.week-nav {display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:8px}
+.week-nav button {background:var(--surface-2);border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:8px;font-size:12px}
+.week-nav button:hover {background:var(--surface-3)}
+.week-nav button.today {background:var(--accent);color:#12141A;font-weight:600;border-color:var(--accent)}
+.week-info {font-size:12px;color:var(--dim);font-family:'JetBrains Mono'}
+
+/* Day Grid */
+.day-grid {display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:18px}
+.day-btn {aspect-ratio:1;border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:10px;font:12px 'JetBrains Mono';cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .2s}
+.day-btn:hover {background:var(--surface-3)}
+.day-btn.active {background:var(--accent);color:#12141A;border-color:var(--accent);font-weight:600}
+.day-btn.today {outline:2px solid var(--accent);outline-offset:-1px}
+.day-number {font:13px 'JetBrains Mono';font-weight:600}
+.day-complete {font:9px 'JetBrains Mono';margin-top:2px;opacity:.7}
+
+/* Habit List */
+.habit-section {margin-bottom:20px}
+.category-header {display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:0 4px}
+.category-bar {width:3px;height:20px;border-radius:2px}
+.category-title {font:italic 500 16px Fraunces}
+.category-label {font:10px 'JetBrains Mono';color:var(--faint);margin-left:auto;text-transform:uppercase}
+.habit-list {background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.habit-row {display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--line);transition:background .2s}
+.habit-row:last-child {border-bottom:0}
+.habit-row:hover {background:var(--surface-2)}
+.habit-icon {font-size:24px;flex-shrink:0}
+.habit-info {flex:1;min-width:0}
+.habit-name {font:14px Inter;font-weight:500;margin-bottom:3px}
+.habit-meta {font:10px 'JetBrains Mono';color:var(--faint);display:flex;gap:8px;flex-wrap:wrap}
+.habit-check {width:32px;height:32px;border:2px solid var(--line);background:var(--surface-2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .2s;flex-shrink:0}
+.habit-check:hover {background:var(--surface-3)}
+.habit-check.done {background:var(--success);border-color:var(--success);color:#12141A;font-weight:600}
+.habit-check.editing-disabled {opacity:.5;cursor:not-allowed}
+
+/* Day Detail Modal */
+.day-detail-card {background:var(--surface-3);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.day-detail-header {font:16px Fraunces;margin-bottom:14px;color:var(--text)}
+.day-detail-info {font:11px 'JetBrains Mono';color:var(--faint);margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.edit-notice {background:var(--surface-2);border-left:2px solid var(--accent);padding:10px;border-radius:6px;font-size:12px;color:var(--dim);margin-bottom:12px}
+
+/* Week Summary */
+.week-summary {background:var(--surface-2);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.week-stats {display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat {text-align:center;padding:8px}
+.stat-value {font:20px Fraunces;font-weight:600;color:var(--accent)}
+.stat-label {font:10px 'JetBrains Mono';color:var(--faint);margin-top:4px;text-transform:uppercase}
+
+/* Progress View */
+.cycle-header {background:linear-gradient(135deg, var(--mente), var(--alma));border-radius:var(--r);padding:20px;margin-bottom:14px;color:#12141A}
+.cycle-title {font:22px Fraunces;margin:0 0 8px}
+.cycle-dates {font:11px 'JetBrains Mono';opacity:.8;margin:0}
+.level-card {background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px;text-align:center}
+.current-level {font:32px Fraunces;font-weight:600;margin-bottom:8px}
+.level-bar-container {margin:16px 0}
+.level-xp {font:11px 'JetBrains Mono';color:var(--dim);margin-top:8px}
+.week-row {display:flex;align-items:center;gap:8px;padding:12px;background:var(--surface-2);border-radius:8px;margin-bottom:8px}
+.week-num {font:12px 'JetBrains Mono';font-weight:600;color:var(--accent);min-width:50px}
+.week-bar {flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.week-bar-fill {height:100%;background:var(--success);border-radius:4px}
+.week-status {font:10px 'JetBrains Mono';color:var(--dim);min-width:60px;text-align:right}
+
+/* Motivation View */
+.quote-card {background:linear-gradient(135deg, var(--surface), var(--surface-2));border:1px solid var(--line);border-radius:var(--r);padding:28px 20px;margin-bottom:14px;text-align:center;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.quote-text {font-family:Fraunces,serif;font-size:18px;font-style:italic;line-height:1.6;margin-bottom:16px;color:var(--text)}
+.quote-author {font:11px 'JetBrains Mono';color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+.quote-refresh {margin-top:20px}
+.quote-refresh button {background:var(--accent);color:#12141A;border:0;padding:10px 20px;border-radius:8px;font-weight:600;font-size:12px}
+.quote-refresh button:hover {opacity:.9}
+
+/* Cycle End Modal */
+.cycle-end-modal {position:fixed;top:0;left:0;right:0;bottom:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.cycle-end-modal.show {display:flex}
+.cycle-end-content {background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;max-width:420px;text-align:center;box-shadow:0 20px 60px #0009}
+.cycle-end-title {font:24px Fraunces;margin:0 0 12px}
+.cycle-end-result {font:32px Fraunces;color:var(--accent);margin:16px 0;font-weight:600}
+.cycle-end-stats {background:var(--surface-2);border-radius:10px;padding:14px;margin:16px 0;font-size:12px}
+.cycle-end-button {display:flex;gap:8px;margin-top:20px}
+.cycle-end-button button {flex:1;padding:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:8px;font-weight:600;cursor:pointer}
+.cycle-end-button button.primary {background:var(--accent);color:#12141A;border-color:var(--accent)}
+
+/* Bottom Navigation */
+.bottom-nav {position:fixed;z-index:30;bottom:0;left:0;right:0;background:#12141af5;border-top:1px solid var(--line);padding:8px calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}
+.nav-inner {max-width:640px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.nav-btn {background:none;border:0;color:var(--faint);padding:8px;display:flex;flex-direction:column;gap:4px;align-items:center;cursor:pointer;border-radius:8px;transition:all .2s}
+.nav-btn:hover {background:var(--surface-2)}
+.nav-btn.active {color:var(--accent);background:var(--surface-2)}
+.nav-btn span:first-child {font-size:20px}
+.nav-btn span:last-child {font:9px 'JetBrains Mono';text-transform:uppercase}
+
+/* Toast */
+.toast {position:fixed;left:50%;bottom:90px;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:var(--surface-3);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font:10px 'JetBrains Mono';z-index:50;transition:.2s;max-width:90%}
+.toast.show {opacity:1;transform:translate(-50%,0)}
+
+/* Initialization Modal */
+.init-modal {position:fixed;top:0;left:0;right:0;bottom:0;background:#000d;display:flex;align-items:center;justify-content:center;z-index:200}
+.init-modal.hidden {display:none}
+.init-content {background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;max-width:400px;box-shadow:0 20px 60px #000a}
+.init-title {font:22px Fraunces;margin:0 0 10px}
+.init-desc {font:13px Inter;color:var(--dim);margin:0 0 20px;line-height:1.5}
+.init-form {display:grid;gap:12px}
+.init-form input, .init-form label {font:inherit}
+.init-form input[type="date"] {background:var(--surface-2);border:1px solid var(--line);color:var(--text);padding:10px;border-radius:8px}
+.init-form button {padding:12px;background:var(--accent);color:#12141A;border:0;border-radius:8px;font-weight:600;cursor:pointer}
+.init-form button:hover {opacity:.95}
+
+@media (max-width:480px) {
+  .day-grid {gap:4px}
+  .day-btn {font-size:10px}
+  .quote-card {padding:20px 16px;min-height:160px}
+  .cycle-end-content {padding:20px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+<p class="eyebrow">Ciclo de 12 semanas</p>
+<h1 class="brand">Estoico</h1>
+<div class="header-row">
+<div>
+<div class="level-display" id="level-display">1</div>
+<div class="level-label">Nivel</div>
+</div>
+<div style="text-align:right">
+<div class="progress-label" id="cycle-progress">Semana 1 de 12</div>
+</div>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" id="cycle-fill" style="width:8.33%"></div>
+</div>
+</header>
+
+<main id="main">
+
+<!-- REGISTRO VIEW -->
+<section class="view active" id="view-registro">
+<div class="greeting">
+<h2>Registro</h2>
+<p>Elige el día para ver y registrar.</p>
+</div>
+
+<div class="card">
+<div class="section-label">Semana actual</div>
+<div class="week-nav">
+<button id="prev-week">← Anterior</button>
+<span class="week-info" id="week-info">Sem 1</span>
+<button id="next-week">Siguiente →</button>
+</div>
+<div class="day-grid" id="day-grid"></div>
+</div>
+
+<div id="day-detail-slot"></div>
+<div id="habit-list-slot"></div>
+
+</section>
+
+<!-- PROGRESO VIEW -->
+<section class="view" id="view-progreso">
+<div class="greeting">
+<h2>Progreso</h2>
+<p>Cómo avanzas en las 12 semanas.</p>
+</div>
+
+<div class="cycle-header">
+<h3 class="cycle-title">Ciclo actual</h3>
+<p class="cycle-dates" id="cycle-dates">—</p>
+</div>
+
+<div class="level-card">
+<div class="current-level" id="final-level">1</div>
+<div style="color:var(--dim);font-size:12px;margin-bottom:10px">Nivel actual</div>
+<div class="level-bar-container">
+<div class="progress-bar">
+<div class="progress-fill" id="final-level-bar" style="width:0%;background:var(--accent)"></div>
+</div>
+<div class="progress-label" id="level-info">0 / 0 puntos</div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label">Progreso por semana</div>
+<div id="week-progress-list"></div>
+</div>
+
+<div class="card">
+<div class="section-label">Resumen general</div>
+<div class="week-summary">
+<div class="week-stats">
+<div class="stat">
+<div class="stat-value" id="stat-completed">0</div>
+<div class="stat-label">Semanas al 100%</div>
+</div>
+<div class="stat">
+<div class="stat-value" id="stat-xp">0</div>
+<div class="stat-label">Puntos totales</div>
+</div>
+</div>
+</div>
+</div>
+
+</section>
+
+<!-- MOTIVACIÓN VIEW -->
+<section class="view" id="view-motivacion">
+<div class="greeting">
+<h2>Recuerda</h2>
+<p>Por qué empezaste.</p>
+</div>
+
+<div class="quote-card" id="quote-card">
+<div class="quote-text" id="quote-text">Cargando sabiduría...</div>
+<div class="quote-author" id="quote-author">—</div>
+</div>
+
+<div class="quote-refresh">
+<button id="new-quote">Nueva frase</button>
+</div>
+
+</section>
+
+</main>
+
+<nav class="bottom-nav">
+<div class="nav-inner">
+<button class="nav-btn active" data-view="registro">
+<span>📅</span>
+<span>Registro</span>
+</button>
+<button class="nav-btn" data-view="progreso">
+<span>📊</span>
+<span>Progreso</span>
+</button>
+<button class="nav-btn" data-view="motivacion">
+<span>✦</span>
+<span>Motivación</span>
+</button>
+</div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- Initialization Modal -->
+<div class="init-modal" id="init-modal">
+<div class="init-content">
+<h2 class="init-title">Bienvenido a Estoico</h2>
+<p class="init-desc">Inicia un ciclo de 12 semanas para forjar tu mejor versión en mente, cuerpo y alma.</p>
+<div class="init-form">
+<label>¿Cuándo empiezas?</label>
+<input type="date" id="start-date">
+<button id="start-cycle">Comenzar</button>
+</div>
+</div>
+</div>
+
+<!-- Cycle End Modal -->
+<div class="cycle-end-modal" id="cycle-end-modal">
+<div class="cycle-end-content">
+<h2 class="cycle-end-title">Ciclo completado</h2>
+<div class="cycle-end-result" id="cycle-end-result">Nivel 12</div>
+<div class="cycle-end-stats">
+<div id="cycle-end-stats">Estadísticas finales</div>
+</div>
+<div class="cycle-end-button">
+<button id="new-cycle">Nuevo ciclo</button>
+<button class="primary" id="view-summary">Ver resumen</button>
+</div>
+</div>
+</div>
+
+<script>
+'use strict';
+const KEY = 'trivium.v2', VERSION = 2;
+
+const STOICS = [
+  ["No es que nos falte tiempo, sino que perdemos mucho.", "Séneca"],
+  ["Hay cosas que dependen de ti y cosas que no.", "Epicteto"],
+  ["La mejor respuesta es no parecerte a quien te hizo daño.", "Marco Aurelio"],
+  ["Se aprende a vivir durante toda la vida.", "Séneca"],
+  ["Vive bien quien vive conforme a la razón.", "Zenón de Citio"],
+  ["La riqueza consiste no en tener grandes posesiones, sino en tener pocas necesidades.", "Séneca"],
+  ["Tu propia serena mente es la única verdadera protección que posees.", "Séneca"],
+  ["No temas ni desees lo que no está en tu poder.", "Epicteto"],
+  ["La excelencia no es destino; es un hábito.", "Aristóteles"],
+  ["Incluso un reloj parado tiene razón dos veces al día.", "Marco Aurelio"],
+  ["La vida es larga si sabes cómo usarla.", "Séneca"],
+  ["Todo cuanto deseamos sucede después de que dejamos de esperarlo.", "Séneca"],
+  ["Lo que no está en tu control no debería perturbar tu paz.", "Marco Aurelio"],
+  ["El único camino hacia la paz es aceptar las cosas que no puedes cambiar.", "Séneca"],
+  ["Cada día es una nueva vida para quien sabe aprovecharlo.", "Séneca"],
+  ["La virtud es el único bien verdadero.", "Zenón de Citio"],
+  ["No es la cosa que te molesta, sino tu opinión sobre ella.", "Epicteto"],
+  ["Quien se conquista a sí mismo es más poderoso que quien conquista ciudades.", "Confucio"],
+  ["El que espera es quien trabaja.", "Séneca"],
+  ["Actúa de forma que podrías vivir eternamente así.", "Marco Aurelio"]
+];
+
+const HABITS = [
+  {id:'python', category:'mente', name:'Aprender Python', icon:'🐍', weeklyTarget:3, weight:4},
+  {id:'lectura', category:'mente', name:'Leer', icon:'📖', weeklyTarget:3, weight:4},
+  {id:'entrenar', category:'cuerpo', name:'Entrenar', icon:'💪', weeklyTarget:4, weight:5},
+  {id:'agua', category:'cuerpo', name:'Agua +2L', icon:'💧', weeklyTarget:7, weight:5},
+  {id:'alcohol', category:'cuerpo', name:'No alcohol', icon:'🍷', weeklyTarget:7, weight:5},
+  {id:'azucar', category:'cuerpo', name:'No azúcar', icon:'🍬', weeklyTarget:5, weight:5},
+  {id:'meditar', category:'alma', name:'Meditar', icon:'🧘', weeklyTarget:4, weight:3},
+  {id:'ayudar', category:'alma', name:'Ayudar a alguien', icon:'🙏', weeklyTarget:1, weight:3}
+];
+
+const CATEGORIES = [
+  {id:'mente', label:'Mente', color:'var(--mente)'},
+  {id:'cuerpo', label:'Cuerpo', color:'var(--cuerpo)'},
+  {id:'alma', label:'Alma', color:'var(--alma)'}
+];
+
+const LEVELS = [
+  {num:1, name:'Cleantes', desc:'El Guardián'},
+  {num:2, name:'Diógenes', desc:'De Babilonia'},
+  {num:3, name:'Apolonio', desc:'De Tyana'},
+  {num:4, name:'Crisipo', desc:'El Lógico'},
+  {num:5, name:'Panaecio', desc:'El Puente'},
+  {num:6, name:'Posidonio', desc:'El Enciclopédico'},
+  {num:7, name:'Catón Viejo', desc:'El Severo'},
+  {num:8, name:'Catón Joven', desc:'El Íntegro'},
+  {num:9, name:'Quinto Musonio', desc:'El Maestro'},
+  {num:10, name:'Epicteto', desc:'El Liberador'},
+  {num:11, name:'Séneca', desc:'El Sabio'},
+  {num:12, name:'Marco Aurelio', desc:'El Emperador Filósofo'}
+];
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+function dateKey(d=new Date()) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function parseDate(k) {
+  return new Date(k + 'T12:00:00');
+}
+
+function addDays(d, n) {
+  let x = new Date(d);
+  x.setDate(x.getDate() + n);
+  return x;
+}
+
+function dayOfWeek(k) {
+  return parseDate(k).getDay();
+}
+
+function getMonday(d) {
+  let day = d.getDay() || 7;
+  return addDays(d, 1 - day);
+}
+
+function formatDate(k) {
+  return parseDate(k).toLocaleDateString('es-AR', {weekday:'short', day:'numeric', month:'short'});
+}
+
+function defaultState() {
+  return {
+    schemaVersion: VERSION,
+    cycleStart: null,
+    currentLevel: 1,
+    weeklyData: {},
+    currentView: 'registro'
+  };
+}
+
+function load() {
+  try {
+    let raw = localStorage.getItem(KEY);
+    return raw ? JSON.parse(raw) : defaultState();
+  } catch(e) {
+    console.warn(e);
+    return defaultState();
+  }
+}
+
+let state = load();
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+
+function getCurrentWeek() {
+  if (!state.cycleStart) return null;
+  let start = parseDate(state.cycleStart);
+  let today = new Date();
+  let diff = Math.floor((today - start) / (1000*60*60*24));
+  return Math.floor(diff / 7) + 1;
+}
+
+function getWeekDates(weekNum) {
+  if (!state.cycleStart) return null;
+  let start = parseDate(state.cycleStart);
+  let weekStart = addDays(start, (weekNum - 1) * 7);
+  let days = [];
+  for (let i = 0; i < 7; i++) {
+    days.push(dateKey(addDays(weekStart, i)));
+  }
+  return days;
+}
+
+function getDisplayWeek() {
+  if (!state.cycleStart) return 1;
+  let currentWeek = getCurrentWeek();
+  return state.displayWeek || currentWeek;
+}
+
+function setDisplayWeek(w) {
+  state.displayWeek = Math.max(1, Math.min(12, w));
+  save();
+}
+
+function getWeekData(weekNum) {
+  let key = 'week_' + weekNum;
+  if (!state.weeklyData[key]) {
+    state.weeklyData[key] = {
+      habits: {},
+      points: 0,
+      completion: 0
+    };
+  }
+  HABITS.forEach(h => {
+    if (!state.weeklyData[key].habits[h.id]) {
+      state.weeklyData[key].habits[h.id] = [];
+    }
+  });
+  return state.weeklyData[key];
+}
+
+function isCompleted(habitId, dateStr) {
+  if (!state.cycleStart) return false;
+  let start = parseDate(state.cycleStart);
+  let dayIndex = Math.floor((parseDate(dateStr) - start) / (1000*60*60*24));
+  if (dayIndex < 0 || dayIndex >= 84) return false;
+  
+  let weekNum = Math.floor(dayIndex / 7) + 1;
+  let dayOfWeek = dayIndex % 7;
+  let weekData = getWeekData(weekNum);
+  
+  return weekData.habits[habitId] && weekData.habits[habitId].includes(dayOfWeek);
+}
+
+function toggleHabit(habitId, dateStr) {
+  if (!state.cycleStart) return;
+  
+  let today = dateKey();
+  let yesterday = dateKey(addDays(new Date(), -1));
+  
+  if (dateStr !== today && dateStr !== yesterday) {
+    toast('Solo puedes editar hoy y ayer.');
+    return;
+  }
+  
+  let start = parseDate(state.cycleStart);
+  let dayIndex = Math.floor((parseDate(dateStr) - start) / (1000*60*60*24));
+  if (dayIndex < 0 || dayIndex >= 84) return;
+  
+  let weekNum = Math.floor(dayIndex / 7) + 1;
+  let dayOfWeek = dayIndex % 7;
+  let weekData = getWeekData(weekNum);
+  
+  let idx = weekData.habits[habitId].indexOf(dayOfWeek);
+  if (idx >= 0) {
+    weekData.habits[habitId].splice(idx, 1);
+  } else {
+    weekData.habits[habitId].push(dayOfWeek);
+  }
+  
+  recalculateWeek(weekNum);
+  save();
+  renderDayDetail(dateStr);
+  renderHeader();
+}
+
+function recalculateWeek(weekNum) {
+  let weekData = getWeekData(weekNum);
+  let totalCompletion = 0;
+  let totalPoints = 0;
+  
+  HABITS.forEach(h => {
+    let completed = weekData.habits[h.id].length;
+    let isComplete = completed >= h.weeklyTarget;
+    if (isComplete) {
+      totalPoints += h.weight;
+    }
+    totalCompletion += Math.min(100, Math.round(completed / h.weeklyTarget * 100)) / HABITS.length;
+  });
+  
+  weekData.completion = Math.round(totalCompletion);
+  weekData.points = totalPoints;
+  
+  // Update level based on weekly performance
+  let previousWeek = getWeekData(Math.max(1, weekNum - 1));
+  let newLevel = state.currentLevel;
+  
+  if (weekData.completion >= 100) {
+    newLevel = Math.min(12, state.currentLevel + 1);
+  } else if (weekData.completion < 50) {
+    newLevel = Math.max(1, state.currentLevel - 1);
+  }
+  
+  state.currentLevel = newLevel;
+}
+
+function canEditDate(dateStr) {
+  let today = dateKey();
+  let yesterday = dateKey(addDays(new Date(), -1));
+  return dateStr === today || dateStr === yesterday;
+}
+
+function toast(msg) {
+  let t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+function renderHeader() {
+  if (!state.cycleStart) return;
+  
+  let levelData = LEVELS[state.currentLevel - 1];
+  $('#level-display').textContent = state.currentLevel;
+  
+  let currentWeek = getCurrentWeek() || 1;
+  $('#cycle-progress').textContent = `Semana ${currentWeek} de 12`;
+  $('#cycle-fill').style.width = (currentWeek / 12 * 100) + '%';
+}
+
+function switchView(v) {
+  state.currentView = v;
+  save();
+  $$('.view').forEach(x => x.classList.toggle('active', x.id === 'view-' + v));
+  $$('.nav-btn').forEach(x => x.classList.toggle('active', x.dataset.view === v));
+  
+  if (v === 'progreso') renderProgreso();
+  if (v === 'motivacion') renderMotivacion();
+}
+
+function renderRegistro() {
+  if (!state.cycleStart) return;
+  
+  let displayWeek = getDisplayWeek();
+  let weekDates = getWeekDates(displayWeek);
+  if (!weekDates) return;
+  
+  let today = dateKey();
+  let currentWeek = getCurrentWeek() || 1;
+  
+  // Update nav buttons
+  $('#prev-week').onclick = () => {
+    setDisplayWeek(getDisplayWeek() - 1);
+    renderRegistro();
+  };
+  $('#next-week').onclick = () => {
+    setDisplayWeek(getDisplayWeek() + 1);
+    renderRegistro();
+  };
+  $('#prev-week').disabled = displayWeek <= 1;
+  $('#next-week').disabled = displayWeek >= 12;
+  
+  let firstDay = parseDate(weekDates[0]);
+  let lastDay = parseDate(weekDates[6]);
+  $('#week-info').textContent = `Sem ${displayWeek} · ${firstDay.toLocaleDateString('es-AR', {day:'numeric',month:'short'})} – ${lastDay.toLocaleDateString('es-AR', {day:'numeric',month:'short'})}`;
+  
+  // Day grid
+  let gridHtml = '';
+  weekDates.forEach((d, idx) => {
+    let dayName = ['L','M','X','J','V','S','D'][idx];
+    let dayNum = parseDate(d).getDate();
+    let isToday = d === today;
+    let canEdit = canEditDate(d);
+    let completion = Math.round(HABITS.filter(h => isCompleted(h.id, d)).length / HABITS.length * 100);
+    
+    gridHtml += `<button class="day-btn ${isToday?'today':''} ${d === displayWeek === currentWeek && idx === new Date().getDay() - 1 ? 'active' : ''}" data-date="${d}">
+      <span class="day-number">${dayNum}</span>
+      <span class="day-complete">${completion}%</span>
+    </button>`;
+  });
+  $('#day-grid').innerHTML = gridHtml;
+  
+  $$('.day-btn').forEach(btn => {
+    btn.onclick = () => {
+      $$('.day-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDayDetail(btn.dataset.date);
+    };
+  });
+  
+  // Default to today if in current week
+  if (displayWeek === currentWeek) {
+    let todayBtn = $$(`.day-btn[data-date="${today}"]`)[0];
+    if (todayBtn) {
+      todayBtn.click();
+    } else {
+      let firstBtn = $('.day-btn');
+      if (firstBtn) firstBtn.click();
+    }
+  } else {
+    let firstBtn = $('.day-btn');
+    if (firstBtn) firstBtn.click();
+  }
+}
+
+function renderDayDetail(dateStr) {
+  if (!state.cycleStart) return;
+  
+  let dayDetail = `<div class="day-detail-card">
+    <div class="day-detail-header">${parseDate(dateStr).toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'})}</div>`;
+  
+  if (!canEditDate(dateStr)) {
+    let yesterday = dateKey(addDays(new Date(), -1));
+    if (dateStr === yesterday) {
+      dayDetail += `<div class="edit-notice">⚠️ Editando día anterior. Solo puedes cambiar el registro de hoy y ayer.</div>`;
+    } else {
+      dayDetail += `<div class="edit-notice">📌 Día pasado. No se puede editar (solo hoy y ayer).</div>`;
+    }
+  }
+  
+  let completed = HABITS.filter(h => isCompleted(h.id, dateStr)).length;
+  dayDetail += `<div class="day-detail-info">${completed} de ${HABITS.length} completados</div>`;
+  
+  dayDetail += '</div>';
+  $('#day-detail-slot').innerHTML = dayDetail;
+  
+  // Render habits by category
+  let habitsHtml = '';
+  CATEGORIES.forEach(cat => {
+    let catHabits = HABITS.filter(h => h.category === cat.id);
+    let habitsForDay = catHabits.filter(h => isCompleted(h.id, dateStr));
+    
+    let editable = canEditDate(dateStr);
+    
+    habitsHtml += `<div class="habit-section">
+      <div class="category-header" style="--cat:${cat.color}">
+        <span class="category-bar" style="background:${cat.color}"></span>
+        <span class="category-title">${cat.label}</span>
+        <span class="category-label">${habitsForDay.length}/${catHabits.length}</span>
+      </div>
+      <div class="habit-list">`;
+    
+    catHabits.forEach(h => {
+      let done = isCompleted(h.id, dateStr);
+      habitsHtml += `<div class="habit-row">
+        <span class="habit-icon">${h.icon}</span>
+        <div class="habit-info">
+          <div class="habit-name">${h.name}</div>
+          <div class="habit-meta">Objetivo: ${h.weeklyTarget}x/semana · Peso: ${h.weight}</div>
+        </div>
+        <button class="habit-check ${done?'done':''} ${!editable?'editing-disabled':''}" data-habit="${h.id}" data-date="${dateStr}" ${!editable?'disabled':''}>
+          ${done ? '✓' : ''}
+        </button>
+      </div>`;
+    });
+    
+    habitsHtml += `</div></div>`;
+  });
+  
+  $('#habit-list-slot').innerHTML = habitsHtml;
+  
+  $$('[data-habit]').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      toggleHabit(btn.dataset.habit, btn.dataset.date);
+    };
+  });
+}
+
+function renderProgreso() {
+  if (!state.cycleStart) return;
+  
+  let startDate = parseDate(state.cycleStart);
+  let endDate = addDays(startDate, 84);
+  
+  $('#cycle-dates').textContent = startDate.toLocaleDateString('es-AR', {day:'numeric', month:'short', year:'numeric'}) + ' – ' + 
+    endDate.toLocaleDateString('es-AR', {day:'numeric', month:'short', year:'numeric'});
+  
+  // Level display with estoico name
+  let levelData = LEVELS[state.currentLevel - 1];
+  $('#final-level').textContent = levelData.name;
+  
+  let currentWeek = getCurrentWeek() || 1;
+  let currentWeekData = getWeekData(currentWeek);
+  let totalXP = 0;
+  let completedWeeks = 0;
+  
+  for (let w = 1; w <= 12; w++) {
+    let weekData = getWeekData(w);
+    totalXP += weekData.points || 0;
+    if ((weekData.completion || 0) >= 100) completedWeeks++;
+  }
+  
+  let levelProgress = (state.currentLevel - 1) / 11;
+  $('#final-level-bar').style.width = (levelProgress * 100) + '%';
+  $('#level-info').textContent = `${levelData.name} — Nivel ${state.currentLevel} de 12 · ${totalXP} puntos acumulados`;
+  
+  // Week progress
+  let weeksList = '';
+  for (let w = 1; w <= 12; w++) {
+    let weekData = getWeekData(w);
+    let completion = weekData.completion || 0;
+    let status = completion >= 100 ? '✓ Completa' : completion < 50 ? '⚠ Baja' : '• Parcial';
+    let statusColor = completion >= 100 ? 'var(--success)' : completion < 50 ? 'var(--danger)' : 'var(--dim)';
+    
+    weeksList += `<div class="week-row">
+      <span class="week-num">Sem ${w}</span>
+      <div class="week-bar">
+        <div class="week-bar-fill" style="width:${completion}%;background:${statusColor}"></div>
+      </div>
+      <span class="week-status">${completion}%</span>
+    </div>`;
+  }
+  $('#week-progress-list').innerHTML = weeksList;
+  
+  // Summary stats
+  $('#stat-completed').textContent = completedWeeks;
+  $('#stat-xp').textContent = totalXP;
+  
+  // Update header
+  renderHeader();
+  
+  // Check if cycle is complete
+  if (currentWeek > 12) {
+    showCycleEnd();
+  }
+}
+
+function renderMotivacion() {
+  let idx = dateKey().split('').reduce((a,c) => a + c.charCodeAt(0), 0) % STOICS.length;
+  $('#quote-text').textContent = '"' + STOICS[idx][0] + '"';
+  $('#quote-author').textContent = '— ' + STOICS[idx][1];
+  
+  $('#new-quote').onclick = () => {
+    let randomIdx = Math.floor(Math.random() * STOICS.length);
+    $('#quote-text').textContent = '"' + STOICS[randomIdx][0] + '"';
+    $('#quote-author').textContent = '— ' + STOICS[randomIdx][1];
+  };
+}
+
+function showInitModal() {
+  let today = dateKey();
+  $('#start-date').value = today;
+  $('#init-modal').classList.remove('hidden');
+  
+  $('#start-cycle').onclick = () => {
+    let dateStr = $('#start-date').value;
+    if (!dateStr) {
+      toast('Selecciona una fecha.');
+      return;
+    }
+    state.cycleStart = dateStr;
+    state.currentLevel = 1;
+    state.weeklyData = {};
+    state.displayWeek = 1;
+    save();
+    $('#init-modal').classList.add('hidden');
+    render();
+  };
+}
+
+function showCycleEnd() {
+  let endData = getWeekData(12);
+  let levelData = LEVELS[state.currentLevel - 1];
+  $('#cycle-end-result').textContent = 'Has alcanzado: ' + levelData.name;
+  $('#cycle-end-stats').innerHTML = `
+    <div>Completaste <strong>${endData.completion}%</strong> de la semana final.</div>
+    <div style="margin-top:8px">Puntos totales en el ciclo: <strong>${Array.from({length:12}, (_,i) => getWeekData(i+1).points || 0).reduce((a,b) => a+b, 0)}</strong></div>
+    <div style="margin-top:8px">Nivel alcanzado: <strong>${state.currentLevel} de 12</strong></div>
+  `;
+  
+  $('#cycle-end-modal').classList.add('show');
+  
+  $('#new-cycle').onclick = () => {
+    $('#cycle-end-modal').classList.remove('show');
+    state = defaultState();
+    save();
+    showInitModal();
+  };
+  
+  $('#view-summary').onclick = () => {
+    switchView('progreso');
+    $('#cycle-end-modal').classList.remove('show');
+  };
+}
+
+function render() {
+  if (!state.cycleStart) {
+    showInitModal();
+  } else {
+    $('#init-modal').classList.add('hidden');
+    renderHeader();
+    renderRegistro();
+    if (state.currentView === 'progreso') renderProgreso();
+    if (state.currentView === 'motivacion') renderMotivacion();
+  }
+}
+
+// Navigation
+$$('.nav-btn').forEach(btn => {
+  btn.onclick = () => switchView(btn.dataset.view);
+});
+
+render();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('No se pudo registrar el service worker:', err);
+    });
+  });
+}
+</script>
+
+</body>
+</html>
