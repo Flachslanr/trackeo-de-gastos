@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>emebe · Gastos</title>
+  <meta name="description" content="Registro simple de gastos con exportación a CSV.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="emebe gastos">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="plus-jakarta-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="adbar">Control de gastos</div>
+  <header class="top">
+    <h1 class="logo">emebe</h1>
+    <span class="eyebrow logo-sub">Gastos</span>
+    <div class="top-total">
+      <span class="label" id="topMonthLabel">Este mes</span>
+      <strong id="topMonthTotal" class="num">$ 0,00</strong>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button role="tab" id="tab-registrar" aria-controls="view-registrar" aria-selected="true">Registrar</button>
+    <button role="tab" id="tab-movimientos" aria-controls="view-movimientos" aria-selected="false">Movimientos</button>
+    <button role="tab" id="tab-exportar" aria-controls="view-exportar" aria-selected="false">Exportar</button>
+  </nav>
+
+  <main>
+    <!-- REGISTRAR -->
+    <section id="view-registrar" role="tabpanel" aria-labelledby="tab-registrar" class="view">
+      <form id="expenseForm" class="card form" novalidate autocomplete="off">
+        <h2 class="card-title">Nuevo gasto</h2>
+        <div class="field">
+          <label for="fDate">Fecha</label>
+          <input id="fDate" name="date" type="date" required>
+        </div>
+        <div class="field">
+          <label for="fConcept">Concepto / referencia</label>
+          <input id="fConcept" name="concept" type="text" maxlength="120" required
+                 placeholder="Ej.: Supermercado" list="conceptList" enterkeyhint="next">
+          <datalist id="conceptList"></datalist>
+        </div>
+        <div class="field">
+          <label for="fAmount">Importe ($)</label>
+          <input id="fAmount" name="amount" type="text" inputmode="decimal" required
+                 placeholder="0,00" enterkeyhint="done">
+        </div>
+        <p class="form-error" id="formError" role="alert" hidden></p>
+        <button type="submit" class="btn primary block">Guardar gasto</button>
+      </form>
+
+      <div class="stats">
+        <div class="stat"><span class="label">Hoy</span><strong class="num" id="statToday">—</strong></div>
+        <div class="stat"><span class="label">Este mes</span><strong class="num" id="statMonth">—</strong></div>
+        <div class="stat"><span class="label">Promedio diario</span><strong class="num" id="statAvg">—</strong></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Últimos registros</h2>
+          <button class="link" data-goto="movimientos">Ver todos</button>
+        </div>
+        <ul class="list" id="recentList"></ul>
+      </div>
+    </section>
+
+    <!-- MOVIMIENTOS -->
+    <section id="view-movimientos" role="tabpanel" aria-labelledby="tab-movimientos" class="view" hidden>
+      <div class="card">
+        <div class="seg" role="radiogroup" aria-label="Período" id="listModeSeg">
+          <button role="radio" data-mode="day">Día</button>
+          <button role="radio" data-mode="month" aria-checked="true">Mes</button>
+          <button role="radio" data-mode="range">Rango</button>
+          <button role="radio" data-mode="all">Todo</button>
+        </div>
+        <div class="period" id="listPeriod"></div>
+        <div class="field">
+          <label for="listSearch" class="sr-only">Buscar concepto</label>
+          <input id="listSearch" type="search" placeholder="Buscar concepto…">
+        </div>
+      </div>
+
+      <div class="summary-bar">
+        <span id="listCount">0 gastos</span>
+        <strong class="num" id="listTotal">$ 0,00</strong>
+      </div>
+
+      <div id="groupedList"></div>
+    </section>
+
+    <!-- EXPORTAR -->
+    <section id="view-exportar" role="tabpanel" aria-labelledby="tab-exportar" class="view" hidden>
+      <div class="card">
+        <h2 class="card-title">Descargar CSV</h2>
+        <div class="seg" role="radiogroup" aria-label="Período a exportar" id="expModeSeg">
+          <button role="radio" data-mode="day">Día</button>
+          <button role="radio" data-mode="month" aria-checked="true">Mes</button>
+          <button role="radio" data-mode="range">Rango</button>
+          <button role="radio" data-mode="all">Todo</button>
+        </div>
+        <div class="period" id="expPeriod"></div>
+
+        <div class="field">
+          <label for="expFormat">Formato</label>
+          <select id="expFormat"></select>
+        </div>
+
+        <div class="preview" id="expPreview"></div>
+        <div class="btn-row">
+          <button class="btn primary" id="btnDownload">Descargar CSV</button>
+          <button class="btn" id="btnShare" hidden>Compartir</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Copia de seguridad</h2>
+        <p class="muted">Los datos se guardan solo en este dispositivo y navegador. Descargá una copia de vez en cuando para no perderlos o para pasarlos a otro equipo.</p>
+        <div class="btn-row">
+          <button class="btn" id="btnBackup">Descargar copia</button>
+          <label class="btn" for="backupFile">Restaurar copia</label>
+          <input type="file" id="backupFile" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Diálogo de edición -->
+  <dialog id="editDialog" class="dialog">
+    <form method="dialog" id="editForm" class="form" novalidate>
+      <h2 class="card-title">Editar gasto</h2>
+      <div class="field">
+        <label for="eDate">Fecha</label>
+        <input id="eDate" type="date" required>
+      </div>
+      <div class="field">
+        <label for="eConcept">Concepto / referencia</label>
+        <input id="eConcept" type="text" maxlength="120" required list="conceptList">
+      </div>
+      <div class="field">
+        <label for="eAmount">Importe ($)</label>
+        <input id="eAmount" type="text" inputmode="decimal" required>
+      </div>
+      <p class="form-error" id="editError" role="alert" hidden></p>
+      <div class="btn-row spread">
+        <button type="button" class="btn danger" id="btnDelete">Eliminar</button>
+        <div class="btn-row">
+          <button type="button" class="btn" id="btnCancel">Cancelar</button>
+          <button type="submit" class="btn primary">Guardar</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span id="toastMsg"></span>
+    <button class="link" id="toastAction" hidden>Deshacer</button>
+  </div>
+
+  <noscript><p class="card">Esta aplicación necesita JavaScript habilitado.</p></noscript>
+</body>
+</html>

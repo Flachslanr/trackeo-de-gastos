@@ -1,0 +1,225 @@
+/* Estética alineada a emebebrand.com.ar:
+   blanco, azul marino #012E4A, celeste #C5DCEA, Plus Jakarta Sans, esquinas rectas. */
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("plus-jakarta-sans.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --navy: #012e4a;
+  --navy-80: rgba(1, 46, 74, .8);
+  --navy-60: rgba(1, 46, 74, .6);
+  --navy-20: rgba(1, 46, 74, .2);
+  --navy-08: rgba(1, 46, 74, .08);
+  --navy-04: rgba(1, 46, 74, .04);
+  --sky: #c5dcea;
+  --sky-soft: #e8f1f7;
+  --white: #ffffff;
+  --gray-bar: #eeeeee;
+  --gray-ink: #636363;
+  --logo: #3c3c3c;
+  --danger: #cc4845;
+  --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--navy);
+  font: 400 15px/1.5 var(--font);
+  min-height: 100dvh;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+.num { font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.muted { color: var(--navy-60); font-size: .88rem; margin: 0 0 16px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.label, .eyebrow {
+  font-size: .7rem; text-transform: uppercase; letter-spacing: .14em; color: var(--navy-60); font-weight: 500;
+}
+
+/* ---------- Barra superior (como el adbar de la tienda) ---------- */
+.adbar {
+  background: var(--gray-bar); color: var(--gray-ink); text-align: center;
+  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+  padding: calc(7px + env(safe-area-inset-top)) 16px 7px;
+}
+
+/* ---------- Encabezado ---------- */
+.top {
+  max-width: 720px; margin: 0 auto; padding: 22px 16px 18px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px;
+}
+.logo {
+  margin: 0; font-weight: 800; font-size: 2.1rem; line-height: 1; letter-spacing: -.035em;
+  color: var(--logo); text-transform: lowercase;
+}
+.logo-sub { margin-top: 6px; }
+.top-total { margin-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.top-total strong { font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; }
+
+/* ---------- Pestañas (estilo menú de la tienda) ---------- */
+.tabs {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; justify-content: center; gap: 4px;
+  background: var(--white); border-top: 1px solid var(--navy-08); border-bottom: 1px solid var(--navy-08);
+}
+.tabs button {
+  border: 0; background: none; cursor: pointer;
+  padding: 14px 14px 12px; font-size: .74rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: .14em; color: var(--navy-60);
+  border-bottom: 2px solid transparent;
+}
+.tabs button[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--navy); }
+
+main { max-width: 720px; margin: 0 auto; padding: 22px 16px 0; }
+.view { display: flex; flex-direction: column; gap: 22px; }
+.view[hidden] { display: none; }
+
+/* ---------- Bloques ---------- */
+.card { background: var(--white); border: 1px solid var(--navy-20); padding: 20px 18px; }
+.card-title {
+  margin: 0 0 18px; font-size: .78rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .16em; color: var(--navy);
+}
+.card-head { display: flex; justify-content: space-between; align-items: baseline; }
+
+/* ---------- Formularios ---------- */
+.form { display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: .7rem; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--navy-60); }
+input, select {
+  width: 100%; min-height: 46px; padding: 10px 12px;
+  border: 1px solid var(--navy-20); border-radius: 0; background: var(--white); color: var(--navy);
+  font-size: 16px; /* evita el zoom automático de iOS */
+  -webkit-appearance: none; appearance: none;
+}
+input::placeholder { color: var(--navy-60); opacity: .7; }
+select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--navy) 50%),
+                    linear-gradient(135deg, var(--navy) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px;
+}
+input[type="date"], input[type="month"] { display: block; min-width: 0; }
+input:focus, select:focus { outline: none; border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
+#fAmount, #eAmount { font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.form-error { margin: 0; color: var(--danger); font-size: .85rem; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 10px 20px; border-radius: 0;
+  border: 1px solid var(--navy); background: var(--white); color: var(--navy);
+  font-size: .74rem; font-weight: 600; text-transform: uppercase; letter-spacing: .14em;
+  cursor: pointer; text-decoration: none; transition: background .15s, color .15s;
+}
+.btn:hover { background: var(--navy-04); }
+.btn.primary { background: var(--navy); color: var(--white); }
+.btn.primary:hover { background: #0a3d5e; }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn.block { width: 100%; min-height: 52px; }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-row.spread { justify-content: space-between; }
+.link {
+  border: 0; background: none; color: var(--navy); cursor: pointer; padding: 4px 0;
+  font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em;
+  text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;
+}
+
+/* ---------- Resumen ---------- */
+.stats { background: var(--sky-soft); border: 1px solid var(--sky); padding: 4px 18px; }
+.stat {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 12px 0; border-top: 1px solid var(--sky);
+}
+.stat:first-child { border-top: 0; }
+.stat strong { font-size: 1rem; font-weight: 600; white-space: nowrap; }
+
+/* ---------- Listas ---------- */
+.list { list-style: none; margin: 0; padding: 0; }
+.item {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 14px; align-items: center;
+  padding: 13px 0; border-top: 1px solid var(--navy-08); cursor: pointer;
+}
+.item:first-child { border-top: 0; }
+.item:hover .concept { text-decoration: underline; text-underline-offset: 3px; }
+.item:focus-visible { outline: 1px solid var(--navy); outline-offset: 2px; }
+.item .concept { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item .meta { font-size: .75rem; color: var(--navy-60); grid-column: 1; letter-spacing: .02em; }
+.item .amount { grid-row: 1 / span 2; grid-column: 2; font-weight: 600; }
+.empty { color: var(--navy-60); text-align: center; padding: 22px 8px; margin: 0; font-size: .88rem; }
+
+.day-group { margin-bottom: 18px; }
+.day-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 0 0 8px; border-bottom: 1px solid var(--navy);
+}
+.day-head .day-name { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; }
+.day-head strong { font-size: .9rem; font-weight: 600; }
+.day-group .card { border: 0; padding: 0; }
+
+.summary-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px; background: var(--sky); color: var(--navy);
+}
+.summary-bar span { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 500; }
+.summary-bar strong { font-size: 1.15rem; font-weight: 700; }
+
+/* ---------- Selector de período ---------- */
+.seg {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--navy-20); margin-bottom: 16px;
+}
+.seg button {
+  border: 0; border-left: 1px solid var(--navy-20); background: var(--white); padding: 10px 4px;
+  font-size: .7rem; font-weight: 500; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--navy-60); cursor: pointer;
+}
+.seg button:first-child { border-left: 0; }
+.seg button[aria-checked="true"] { background: var(--navy); color: var(--white); }
+.period { display: grid; gap: 10px; margin-bottom: 16px; }
+.period:empty { display: none; }
+
+.preview {
+  background: var(--sky-soft); border-left: 3px solid var(--sky);
+  padding: 12px 14px; margin: 4px 0 18px; font-size: .88rem;
+}
+.preview strong { font-weight: 700; }
+.preview .muted { margin: 4px 0 0; font-size: .8rem; }
+
+/* ---------- Diálogo ---------- */
+.dialog {
+  border: 1px solid var(--navy-20); border-radius: 0; padding: 22px 20px;
+  width: min(440px, calc(100vw - 32px)); background: var(--white); color: var(--navy);
+}
+.dialog::backdrop { background: rgba(1, 46, 74, .35); }
+
+/* ---------- Aviso ---------- */
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  display: flex; gap: 16px; align-items: center;
+  background: var(--navy); color: var(--white); padding: 13px 18px;
+  font-size: .85rem; max-width: calc(100vw - 32px); width: max-content; z-index: 20;
+}
+.toast[hidden] { display: none; }
+.toast .link { color: var(--sky); }
+
+@media (min-width: 640px) {
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 16px 18px; }
+  .stat { flex-direction: column; gap: 4px; padding: 0; border-top: 0; }
+  .stat strong { font-size: 1.15rem; }
+  .tabs { gap: 24px; }
+}
